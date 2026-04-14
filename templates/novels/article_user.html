@@ -1,0 +1,100 @@
+{% extends 'novels/article_base.html' %}
+{% load static %}
+{% block description %}{{article.summary}}{% endblock description %}
+{% block title %} {{article.title}} - NoveLearn {% endblock title %}
+{% block canonical %}
+    <link rel="canonical" href="https://novelearn.ru/articles/{{article.url}}/"/>
+{% endblock canonical %}
+
+
+{% block article %}
+<input type="hidden" id="article-id" value="{{article.id}}">
+<div class="left-ads-display col-lg-6 offset-lg-1">
+    <div class="article-header row">
+        <div class="col-xl-5 col-lg-4 col-md-6 col-sm-12 col-12  p-0">
+            <h2 class="mb-3 ">{{article.title}}</h2>
+        </div>
+
+        <div class="article-info-wrap col-xl-7 col-lg-8 col-md-6 col-sm-12 col-12 p-0">
+            <div>
+                <div class="mb-1 time-to-read">Рейтинг:</div>
+                <div class="time-read"><i class="fa fa-star article-icon-time" aria-hidden="true"></i><span>5.0</span>
+                </div>
+            </div>
+            <div class="mb-1 time-to-read">
+                <div class="mb-1">Время на чтение:</div>
+                <div class="time-read"><i class="fa fa-clock-o article-icon-time" aria-hidden="true"></i>
+                    5-10 минут
+                </div>
+            </div>
+            <div>
+                <div class="mb-1">Автор статьи:</div>
+                <div class="time-read"><i class="fa fa-user-circle-o article-icon-time" aria-hidden="true"></i>{{user.username}}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div>
+        {{article.html_layout | safe}}
+    </div>
+
+    <div class="mb-3 article-date">
+        <p>Дата публикации:</p>
+    </div>
+
+    {% if user.is_active %}
+    <div class="form-rating">
+        <h3 class="editContent" style="outline: none; cursor: inherit;">
+                Оценить статью</h3>
+            <div class="form-wrap-rating">
+                <form class="rating" id="rating-form-star" method="post"
+                      action="">
+                    {% csrf_token %}
+                    <label>
+                        <input type="radio" class="rating-star" name="stars" value="1"/>
+                        <span class="icon">★</span>
+                    </label>
+                    <label>
+                        <input type="radio" name="stars" value="2" class="rating-star"/>
+                        <span class="icon">★</span>
+                        <span class="icon">★</span>
+                    </label>
+                    <label>
+                        <input type="radio" name="stars" value="3" class="rating-star"/>
+                        <span class="icon">★</span>
+                        <span class="icon">★</span>
+                        <span class="icon">★</span>
+                    </label>
+                    <label>
+                        <input type="radio" name="stars" value="4" class="rating-star"/>
+                        <span class="icon">★</span>
+                        <span class="icon">★</span>
+                        <span class="icon">★</span>
+                        <span class="icon">★</span>
+                    </label>
+                    <label>
+                        <input type="radio" name="stars" value="5" class="rating-star"/>
+                        <span class="icon">★</span>
+                        <span class="icon">★</span>
+                        <span class="icon">★</span>
+                        <span class="icon">★</span>
+                        <span class="icon">★</span>
+                    </label>
+                </form>
+                <div class="w3layouts-newsletter form-rating">
+                    <button type="submit" class="btn1 btn" form="rating-form-star">Отправить</button>
+                </div>
+            </div>
+    </div>
+    {% endif %}
+    <hr class="hr-mobile">
+
+</div>
+<script>
+    function addReview(name, id) {
+        document.getElementById("contactparent").value = id;
+        document.getElementById("contactcomment").innerText = `${name}, `
+    }
+    getLocalDateTime();
+</script>
+{% endblock article %}

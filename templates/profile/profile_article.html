@@ -1,0 +1,32 @@
+{% extends 'profile/profile_base.html' %}
+{% block title %} Профиль пользователя - NoveLearn {% endblock title %}
+{% block canonical %}<link rel="canonical" href="https://novelearn.ru/profile/"/>{% endblock canonical %}
+
+{% block profile %}
+<div class="left-ads-display col-lg-9 col-md-8 profile-main">
+    <div class="profile-progress-inside">
+        <h4>Написать статью</h4>
+        <div>
+            <form action="{% url 'user_article' %}" method="post">
+                {% csrf_token %}
+                {{myform.media}}
+                {{myform.title}}
+                {{myform.body}}
+                <div class="col-xl-3 col-lg-4 col-md-5 col-sm-4 col-5">
+                                <button type="submit" name="save" class="btn1 btn profile-changer">Сохранить</button>
+                            </div>
+                <div class="col-xl-3 col-lg-4 col-md-5 col-sm-4 col-5">
+                                <button type="submit" name="moderate" class="btn1 btn profile-changer">Модерация</button>
+                            </div>
+                <div class="col-xl-3 col-lg-4 col-md-5 col-sm-4 col-5">
+                                <button type="submit" name="review" class="btn1 btn profile-changer">Посмотреть статью</button>
+                            </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+
+{% endblock profile  %}
+

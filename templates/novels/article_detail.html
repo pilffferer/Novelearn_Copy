@@ -1,0 +1,184 @@
+{% extends 'novels/article_base.html' %}
+{% load static %}
+{% block description %}{{article.summary}}{% endblock description %}
+{% block title %} {{article.title}} - NoveLearn {% endblock title %}
+{% block canonical %}
+    <link rel="canonical" href="https://novelearn.ru/articles/{{article.url}}/"/>
+{% endblock canonical %}
+
+
+{% block article %}
+<input type="hidden" id="article-id" value="{{article.id}}">
+<div class="left-ads-display col-lg-6 offset-lg-1">
+    <div class="article-header row">
+        <div class="col-xl-5 col-lg-4 col-md-6 col-sm-12 col-12  p-0">
+            <h2 class="mb-3 ">{{article.title}}</h2>
+        </div>
+
+        <div class="article-info-wrap col-xl-7 col-lg-8 col-md-6 col-sm-12 col-12 p-0">
+            <div>
+                <div class="mb-1 time-to-read">Рейтинг:</div>
+                <div class="time-read"><i class="fa fa-star article-icon-time" aria-hidden="true"></i><span id="article-rating">%4.5%</span>
+                </div>
+            </div>
+            <div class="mb-1 time-to-read">
+                <div class="mb-1">Время на чтение:</div>
+                <div class="time-read"><i class="fa fa-clock-o article-icon-time" aria-hidden="true"></i>
+                    {{article.min_read_time}}-{{article.max_read_time}} минут
+                </div>
+            </div>
+            <div>
+                <div class="mb-1">Автор статьи:</div>
+                <div class="time-read"><i class="fa fa-user-circle-o article-icon-time" aria-hidden="true"></i>{{article.author}}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div>
+        {{article.html_layout | safe}}
+    </div>
+
+    <div class="mb-3 article-date">
+        <p>Дата публикации: {{article.publish_date.date}}</p>
+    </div>
+
+    <div class="tag-wrap">
+        {% for tag in article.tags.all %}
+        <div class="article-tag"><span># {{tag.name}}</span></div>
+        {% endfor %}
+    </div>
+    {% if user.is_active %}
+    <div class="form-rating">
+        <h3 class="editContent" style="outline: none; cursor: inherit;">
+                Оценить статью</h3>
+            <div class="form-wrap-rating">
+                <form class="rating" id="rating-form-star" method="post"
+                      action="{% url 'add_article_rating' article.id %}">
+                    {% csrf_token %}
+                    <label>
+                        <input type="radio" class="rating-star" name="stars" value="1"/>
+                        <span class="icon">★</span>
+                    </label>
+                    <label>
+                        <input type="radio" name="stars" value="2" class="rating-star"/>
+                        <span class="icon">★</span>
+                        <span class="icon">★</span>
+                    </label>
+                    <label>
+                        <input type="radio" name="stars" value="3" class="rating-star"/>
+                        <span class="icon">★</span>
+                        <span class="icon">★</span>
+                        <span class="icon">★</span>
+                    </label>
+                    <label>
+                        <input type="radio" name="stars" value="4" class="rating-star"/>
+                        <span class="icon">★</span>
+                        <span class="icon">★</span>
+                        <span class="icon">★</span>
+                        <span class="icon">★</span>
+                    </label>
+                    <label>
+                        <input type="radio" name="stars" value="5" class="rating-star"/>
+                        <span class="icon">★</span>
+                        <span class="icon">★</span>
+                        <span class="icon">★</span>
+                        <span class="icon">★</span>
+                        <span class="icon">★</span>
+                    </label>
+                </form>
+                <div class="w3layouts-newsletter form-rating">
+                    <button type="submit" class="btn1 btn" form="rating-form-star">Отправить</button>
+                </div>
+            </div>
+    </div>
+    {% endif %}
+    <hr class="hr-mobile">
+    {% if not user.is_active %}
+    <br>
+    <h5>Для комментирования <a href="{% url 'login' %}">войдите на сайт</a> или
+        <a href="{% url 'registration' %}">зарегистрируйтесь</a></h5>
+    <br>
+    {% endif %}
+    {% if user.is_active %}
+    <br>
+    <div class="row">
+        <div class="single-form-left col-md-10 offset-md-1 col-sm-12 col-12">
+            <!-- contact form grid -->
+            <div class="contact-single">
+                <h3 class="editContent" style="outline: none; cursor: inherit;">
+                    <span class="sub-tittle editContent">{{ article.articlereviews_set.count }}</span>
+                    Оставить отзыв</h3>
+                <form action="{% url 'add_article_review' article.id %}" method="post" class="mt-4"
+                      id="formReview">
+                    {% csrf_token %}
+                    <input type="hidden" name="parent" id="contactparent" value="">
+                    <div class="form-group editContent">
+                        <label for="contactcomment" class="editContent">
+                            Ваш комментарий *
+                        </label>
+                        <textarea class="form-control border" rows="5" name="text"
+                                  id="contactcomment" required=""></textarea>
+                    </div>
+                    <div class="w3layouts-newsletter review-comment">
+                        <button type="submit"
+                            class="btn1 btn">
+                        Отправить
+                    </button></div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% for article_review in article.get_review %}
+    <div class="media py-3 mt-3 col-lg-10 offset-1">
+        <img src="{% static 'images/te2.jpg' %}" class="mr-3 img-fluid" alt="image">
+        <div class="media-body">
+            <div class="review-header">
+                <h5 class="mt-0 editContent">
+                    {{ article_review.user }}
+                </h5>
+                <p class="mt-0 mb-0 editContent review-date-wrap">
+                    <span class="review-date">{{ article_review.publish_date | date:"Y-m-d H:i" }}</span>
+                </p>
+            </div>
+            <p class="mt-0 editContent">
+                {{ article_review.text }}
+            </p>
+            {% if user.is_active %}
+            <a href="#formReview"
+               onclick="addReview('{{ article_review.user.username }}', '{{ article_review.id }}')">Ответить</a>
+            {% endif %}
+            {% for rew in article_review.articlereviews_set.all %}
+            <div class="media mt-4 editContent">
+                <a class="pr-3">
+                    <img src="{% static 'images/te2.jpg' %}" class="img-fluid "
+                         alt="image">
+                </a>
+                <div class="media-body">
+                    <div class="review-header">
+                        <h5 class="mt-0 editContent">
+                            {{ rew.user }}
+                        </h5>
+                        <p class="mt-0 mb-0 editContent review-date-wrap">
+                            <span class="review-date">{{ rew.publish_date | date:"Y-m-d H:i" }}</span>
+                        </p>
+                    </div>
+                    <p class="mt-0 editContent">{{ rew.text }}</p>
+                </div>
+
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+
+</div>
+<script>
+    function addReview(name, id) {
+        document.getElementById("contactparent").value = id;
+        document.getElementById("contactcomment").innerText = `${name}, `
+    }
+    getLocalDateTime();
+</script>
+{% endblock article %}

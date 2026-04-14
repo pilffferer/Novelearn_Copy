@@ -1,0 +1,149 @@
+{% extends 'novels/base.html' %}
+{% load static %}
+{% block title %} {{novel.title}} - Описание новеллы {% endblock title %}
+{% block canonical %}<link rel="canonical" href="https://novelearn.ru/catalog/{{novel.url}}/"/>{% endblock canonical %}
+{% block description %}{{novel.description}}{% endblock description %}
+
+{% block novel %}
+<div class="left-ads-display col-lg-6 offset-lg-1">
+    <div class="row">
+        <div class="desc1-left col-md-6">
+            <img src="{{ novel.poster.url }}" class="img-fluid" alt="">
+        </div>
+        <div class="desc1-right col-md-6 pl-lg-4">
+            <h3 class="editContent" style="font-size: 24px">
+                {{ novel.title }}</h3>
+            <h5 class="editContent"></h5>
+            <ul>
+                <li style="list-style: none">
+                    <span><b>Разработчик:</b>
+                {% for developer in novel.developers.all %}
+                {{ developer.name }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+                </span>
+                </li>
+                <li style="list-style: none">
+                    <span><b>Тип:</b> {{ novel.category }}</span>
+                <li style="list-style: none">
+                <span><b>Жанр:</b>
+                {% for genre in novel.genres.all %}
+                {{ genre.name }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+                </span>
+                </li>
+                <li style="list-style: none">
+                    <span><b>Дата выхода:</b> {{ novel.release_date }}</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row sub-para-w3layouts mt-5">
+
+        <h3 class="shop-sing editContent" style="outline: none; cursor: inherit;">
+            О визуальной новелле {{ novel.title }}</h3>
+        <div class="row">
+            {% for image in novel.novelshots_set.all %}
+            <img src="{{ image.image.url }}" class="img-novel-shots col-lg-4 "
+                 alt="{{ image.description }}">
+            {% endfor %}
+        </div>
+        <p class="editContent" style="outline: none; cursor: inherit;">
+            {{ novel.description | safe }}
+        </p>
+        <p class="mt-3 italic-blue editContent video-frame"
+           style="outline: none; cursor: inherit;">
+            <iframe
+                    src={{novel.video_url}}
+                    frameborder="0" allow="accelerometer; autoplay;
+                                                                           encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen>
+
+            </iframe>
+        </p>
+    </div>
+    <hr class="hr-mobile">
+    {% if not user.is_active %}
+    <br>
+    <h5>Для комментирования <a href="{% url 'login' %}">войдите на сайт</a> или
+        <a href="{% url 'registration' %}">зарегистрируйтесь</a></h5>
+    <br>
+    {% endif %}
+    {% if user.is_active %}
+    <div class="row">
+        <div class="single-form-left col-md-10 offset-md-1 col-sm-12 col-12">
+            <!-- contact form grid -->
+            <div class="contact-single">
+                <h3 class="editContent" style="outline: none; cursor: inherit;">
+                    <span class="sub-tittle editContent">{{ novel.reviews_set.count }}</span>Оставить
+                    отзыв</h3>
+                <form action="{% url 'add_review' novel.id %}" method="post" class="mt-4" id="formReview">
+                    {% csrf_token %}
+                    <input type="hidden" name="parent" id="contactparent" value="">
+                    <div class="form-group editContent">
+                        <label for="contactcomment" class="editContent">
+                            Ваш комментарий *
+                        </label>
+                        <textarea class="form-control border" rows="5" name="text"
+                                  id="contactcomment" required=""></textarea>
+                    </div>
+                    <div class="w3layouts-newsletter review-comment">
+                        <button type="submit"
+                            class="btn1 btn">
+                        Отправить
+                    </button></div>
+                </form>
+            </div>
+            <!--  //contact form grid ends here -->
+        </div>
+    </div>
+    {% endif %}
+    {% for review in novel.get_review %}
+    <div class="media py-5 col-lg-10 offset-1">
+        <img src="{% static 'images/te2.jpg' %}" class="mr-3 img-fluid" alt="image">
+        <div class="media-body">
+            <div class="review-header">
+                <h5 class="mt-0 editContent">
+                    {{ review.name }}
+                </h5>
+                <p class="mt-0 mb-0 editContent review-date-wrap">
+                    <span class="review-date">{{ review.publish_date | date:"Y-m-d H:i" }}</span>
+                </p>
+            </div>
+
+            <p class="mt-0 editContent">
+                {{ review.text }}
+            </p>{% if user.is_active %}
+            <a href="#formReview"
+               onclick="addReview('{{ review.name }}', '{{ review.id }}')">Ответить</a>{% endif %}
+            {% for rew in review.reviews_set.all %}
+            <div class="media mt-5 editContent">
+                <a class="pr-3">
+                    <img src="{% static 'images/te2.jpg' %}" class="img-fluid " alt="image">
+                </a>
+                <div class="media-body">
+                    <div class="review-header">
+                        <h5 class="mt-0 editContent">
+                            {{ rew.name }}
+                        </h5>
+                        <p class="mt-0 mb-0 editContent review-date-wrap">
+                            <span class="review-date">{{ review.publish_date | date:"Y-m-d H:i" }}</span>
+                        </p>
+                    </div>
+                    <p class="mt-0 editContent">{{ rew.text }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+</div>
+<script>
+    function addReview(name, id) {
+        document.getElementById("contactparent").value = id;
+        document.getElementById("contactcomment").innerText = `${name}, `
+    }
+
+    getLocalDateTime();
+</script>
+{% endblock novel %}
