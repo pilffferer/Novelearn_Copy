@@ -1,40 +1,243 @@
 {% extends 'base.html' %}
+{% load static %}
+
 {% block title %} NoveLearn - Авторизация {% endblock title %}
 {% block canonical %}<link rel="canonical" href="https://novelearn.ru/login/"/>{% endblock canonical %}
-{% block content %}
-<div class="wrap-main-block" align="center">
-    <h3>Вход</h3>
-    <br>
-    <form action="{% url 'login' %}" method="post" id="login-form">
-        {% csrf_token %}
-        <div class="login-wrap" align="center">
-            <div class="form-group">
-                <label for="login"><p>Логин</p></label>
-                <input type="text" class="my-input" id="login" name="login" placeholder="Введите login">
-            </div>
-            <div class="form-group">
-                <label for="password"><p>Пароль</p></label>
-                <input type="password" class="my-input" id="password" name="password" placeholder="Введите пароль">
-            </div>
-            <div class="form-check">
-                <input type="checkbox" class="form-check-input" id="remember" name="remember" checked>
-                <label class="form-check-label" for="remember">Запомнить меня</label>
-            </div>
-        </div>
-        <br>
-        <div class="w3layouts-newsletter" align="center">
-            <button type="submit" class="btn1 btn next-slide" style="font-size: 13px">Вход</button>
-        </div>
-        {% if invalid%}
-        <br>
-        <p>Неверный логин или пароль!</p>
-        {% endif %}
-    </form>
-    <br>
-    <div class="login-text-wrap">
-        <p class="login-text-link">Ещё нет аккаунта? <a href="/registration">Зарегистрироваться</a></p>
-        <p class="login-text-link">Забыли пароль? <a href="{% url 'password_reset' %}">Восстановить</a></p>
-    </div>
 
+{% block content %}
+<div class="login-split-container">
+    <!-- Левая сторона с котом -->
+    <div class="login-cat-side">
+        <img src="{% static 'cat-login.jpg' %}" alt="Милый котик" class="cat-image">
+        <!-- Или временная заглушка: -->
+        <!-- <img src="https://placekitten.com/800/1000" alt="Котик" class="cat-image"> -->
+    </div>
+    
+    <!-- Правая сторона с формой -->
+    <div class="login-form-side">
+        <div class="login-form-wrapper">
+            <h3 class="login-title">Вход в личный кабинет</h3>
+            
+            <form action="{% url 'login' %}" method="post" id="login-form">
+                {% csrf_token %}
+                
+                <div class="form-group-custom">
+                    <label for="login">Логин</label>
+                    <input type="text" 
+                           id="login" 
+                           name="login" 
+                           class="input-custom" 
+                           placeholder="Введите логин"
+                           required>
+                </div>
+                
+                <div class="form-group-custom">
+                    <label for="password">Пароль</label>
+                    <input type="password" 
+                           id="password" 
+                           name="password" 
+                           class="input-custom" 
+                           placeholder="Введите пароль"
+                           required>
+                </div>
+                
+                <div class="form-check-custom">
+                    <input type="checkbox" 
+                           id="remember" 
+                           name="remember" 
+                           checked>
+                    <label for="remember">Запомнить меня</label>
+                </div>
+                
+                {% if invalid %}
+                <div class="error-message">
+                    <p>❌ Неверный логин или пароль!</p>
+                </div>
+                {% endif %}
+                
+                <button type="submit" class="login-submit-btn">Войти</button>
+            </form>
+            
+            <div class="login-links">
+                <p>Нет аккаунта? <a href="/registration">Зарегистрироваться</a></p>
+                <p>Забыли пароль? <a href="{% url 'password_reset' %}">Восстановить</a></p>
+            </div>
+        </div>
+    </div>
 </div>
+
+<style>
+    /* Стили для страницы входа с котом */
+    .login-split-container {
+        display: flex;
+        min-height: calc(100vh - 200px); /* Учитываем header и footer */
+        margin: 0;
+        padding: 0;
+    }
+    
+    .login-cat-side {
+        flex: 1;
+        background-color: #f5f5f5;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .cat-image {
+        max-height: 100vh;  /* Максимум 100% высоты экрана */
+        width: 75%;
+        object-fit: contain;  /* Вписывает картинку полностью без обрезки */
+    }
+    .login-form-side {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        /* background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); */
+        padding: 40px;
+    }
+    
+    .login-form-wrapper {
+        background: white;
+        padding: 50px 40px;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        width: 100%;
+        max-width: 400px;
+    }
+    
+    .login-title {
+        text-align: center;
+        margin-bottom: 30px;
+        color: #333;
+        font-size: 28px;
+        font-weight: 300;
+    }
+    
+    .form-group-custom {
+        margin-bottom: 25px;
+    }
+    
+    .form-group-custom label {
+        display: block;
+        margin-bottom: 8px;
+        color: #555;
+        font-size: 14px;
+        font-weight: 500;
+    }
+    
+    .input-custom {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 16px;
+        transition: all 0.3s;
+        box-sizing: border-box;
+    }
+    
+    .input-custom:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    
+    .form-check-custom {
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+    }
+    
+    .form-check-custom input[type="checkbox"] {
+        margin-right: 10px;
+        width: 18px;
+        height: 18px;
+    }
+    
+    .form-check-custom label {
+        color: #666;
+        font-size: 14px;
+        cursor: pointer;
+    }
+    
+    .error-message {
+        background: #fee;
+        color: #c33;
+        padding: 12px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        text-align: center;
+        border: 1px solid #fcc;
+    }
+    
+    .error-message p {
+        margin: 0;
+    }
+    
+    .login-submit-btn {
+        width: 100%;
+        padding: 14px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+        margin-bottom: 25px;
+    }
+    
+    .login-submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+    }
+    
+    .login-links {
+        text-align: center;
+    }
+    
+    .login-links p {
+        margin: 10px 0;
+        color: #666;
+        font-size: 14px;
+    }
+    
+    .login-links a {
+        color: #667eea;
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.2s;
+    }
+    
+    .login-links a:hover {
+        color: #764ba2;
+        text-decoration: underline;
+    }
+    
+    /* Адаптив для мобильных */
+    @media (max-width: 768px) {
+        .login-split-container {
+            flex-direction: column;
+        }
+        
+        .login-cat-side {
+            min-height: 300px;
+        }
+        
+        .login-form-side {
+            padding: 30px 20px;
+        }
+        
+        .login-form-wrapper {
+            padding: 30px 25px;
+        }
+    }
+    
+    /* Скрываем стандартный header на странице логина если нужно */
+    .main-banner.bg {
+        display: none;
+    }
+</style>
 {% endblock content %}

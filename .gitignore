@@ -87,3 +87,45 @@ db.sqlite3
 data.json
 */.idea/workspace.xml
 
+# Виртуальное окружение
+venv/
+env/
+.env/
+.venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+/media/
+/staticfiles/
+
+# Базы данных
+*.db
+*.sqlite3
+
+# Файлы IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Файлы ОС
+.DS_Store
+Thumbs.db
+
+# Секретные файлы
+.env
+*.env
+secrets.py
