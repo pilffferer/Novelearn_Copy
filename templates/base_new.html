@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="ru">
+<head>
+    <!-- //Meta tag Keywords -->
+    <title> {% block title %} {% endblock title %}</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- //Meta tag Keywords -->
+    <!-- Custom-Files -->
+    <link rel="stylesheet" href="{% static 'codemirror/lib/codemirror.css' %}">
+    <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">
+    <!-- Bootstrap-Core-CSS -->
+    <!--/ Style-CSS -->
+
+    {% block canonical %}{% endblock canonical %}
+
+
+    <!--// Style-CSS -->
+    <!-- font-awesome-icons -->
+    <link href="{% static 'css/font-awesome.css' %}" rel="stylesheet">
+    <!-- //font-awesome-icons -->
+    <!-- /Fonts -->
+    <link href="//fonts.googleapis.com/css?family=Lato:100,100i,300,300i,400,400i,700" rel="stylesheet">
+    <link href="//fonts.googleapis.com/css?family=Source+Sans+Pro:200,200i,300,300i,400,400i,600,600i,700,700i,900"
+          rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'highlight/styles/base16/unikitty-light.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/newstyle.css' %}" type="text/css" media="all">
+    <link rel="icon" href="{% static 'images/icon.png' %}">
+    <link rel="manifest" href="{% static 'manifest.webmanifest' %}" />
+    <script src="{% static 'highlight/highlight.min.js' %}"></script>
+
+    <script>
+        hljs.highlightBlock(document.createElement("pre"));
+        var k = ['label', 'call', 'jump', 'menu', 'scene', 'show', 'hide', 'play', 'stop', 'define', 'pause', 'window', 'nvl', 'clear']
+        k.forEach((value) => {
+            hljs.getLanguage("python").keywords[value] = ["keyword", 1];
+        });</script>
+    <script>hljs.highlightAll();</script>
+
+    <script src="{% static 'js/index.js' %}"></script>
+    <script src="{% static 'js/expFunc.js' %}"></script>
+
+
+    <script src="{% static 'codemirror/lib/codemirror.js' %}"></script>
+    <script src="{% static 'codemirror/addon/edit/matchbrackets.js' %}"></script>
+    <script src="{% static 'codemirror/mode/python/python.js' %}"></script>
+    <!-- //Fonts -->
+    <!--    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+    <script src="https://kit.fontawesome.com/32b2c96c0f.js" crossorigin="anonymous"></script>
+    <meta name="description" content="{% block description %}NoveLearn - сборник полезных материалов для разработки своей новеллы. Хочешь создать свою новеллу или просто интересна эта тема? Заходи к нам!{% endblock description %}">
+    <meta name="keywords" content="визуальные новеллы, разработка новеллы, разработка на renpy, разработка игр, материалы по новеллам">
+</head>
+<body>
+<div id="page" class="page">
+    <div class="main-banner bg {% block header %} {% endblock header %}" id="home">
+        {% include 'include/header_new.html' %}
+        {% block banner_info %} {% endblock banner_info %}
+    </div>
+    {% block content %}
+    {% endblock content %}
+</div>
+<script>
+       if ('serviceWorker' in navigator) {
+           navigator.serviceWorker.register('{% url "sw.js" %}', { scope: '/' }).then(function(reg) {
+               // registration worked
+               console.log('Registration succeeded. Scope is ' + reg.scope);
+           }).catch(function(error) {
+               // registration failed
+               console.log('Registration failed with ' + error);
+           });
+       }
+   </script>
+</body>
+
+</html>

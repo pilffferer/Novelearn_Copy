@@ -311,7 +311,29 @@ class NovelView(ListView):
 
 class ArticleView(ListView):
     model = models.Article
-    queryset = models.Article.objects.filter(draft=False).order_by("-publish_date")
+    paginate_by = 8
+    context_object_name = "article_list"
+    template_name = "novels/article_list.html"
+
+    def get_queryset(self):
+        queryset = models.Article.objects.filter(draft=False)
+        
+        # Поиск
+        query = self.request.GET.get('q', '')
+        if query:
+            from django.db.models import Q
+            queryset = queryset.filter(
+                Q(title__icontains=query) | Q(summary__icontains=query)
+            )
+        
+        # Сортировка
+        sort = self.request.GET.get('sort', 'date')
+        if sort == 'author':
+            queryset = queryset.order_by('author__username')
+        else:
+            queryset = queryset.order_by('-publish_date')
+        
+        return queryset
 
 
 class ArticleDetailView(DetailView):

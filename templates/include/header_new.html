@@ -1,0 +1,66 @@
+{% load novel_tag %}
+{% load static %}
+<header class="header">
+    <nav class="header__nav">
+        <!-- Логотип -->
+        
+        <a href="/" class="navbar-brand p-0">
+            <img src="{% static 'logo.png' %}" alt="NoveLearn" height="36">
+        </a>
+
+        <!-- Пункты меню -->
+        <ul class="header__menu">
+            <li class="header__menu-item">
+                <a href="/" class="header__link {% if request.path == '/' %}header__link--active{% endif %}">Главная</a>
+            </li>
+            <li class="header__menu-item">
+                <a href="/catalog" class="header__link {% if '/catalog' in request.path %}header__link--active{% endif %}">Каталог</a>
+            </li>
+            <li class="header__menu-item">
+                <a href="/course" class="header__link {% if '/course' in request.path %}header__link--active{% endif %}">Обучение</a>
+            </li>
+            <li class="header__menu-item">
+                <a href="/articles" class="header__link {% if '/articles' in request.path %}header__link--active{% endif %}">Статьи</a>
+            </li>
+            <li class="header__menu-item">
+                <a href="/news" class="header__link {% if '/news' in request.path %}header__link--active{% endif %}">Новости</a>
+            </li>
+        </ul>
+
+        <!-- Правая часть -->
+        <div class="header__actions">
+            <!-- Поиск -->
+            <button class="header__icon-btn" aria-label="Настройки">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+            </button>
+
+            <!-- Уведомления -->
+            <button class="header__icon-btn" aria-label="Уведомления">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                </svg>
+            </button>
+
+            <!-- Пользователь -->
+            {% if user.is_active %}
+                <div class="header__user-dropdown">
+                    <button class="header__avatar" aria-label="Профиль">
+                        {{ user.username.0|upper }}
+                    </button>
+                    <div class="header__dropdown">
+                        <a href="{% url 'profile_main' %}" class="header__dropdown-item">Профиль</a>
+                        <a href="{% url 'logout' %}" class="header__dropdown-item">Выход</a>
+                    </div>
+                </div>
+            {% else %}
+                <a href="{% url 'login' %}" class="header__login-btn">Войти</a>
+            {% endif %}
+        </div>
+    </nav>
+</header>
+
+<div style="display: none" id="user-id">{{ user.id }}</div> 
