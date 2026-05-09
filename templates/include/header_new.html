@@ -25,6 +25,9 @@
             <li class="header__menu-item">
                 <a href="/news" class="header__link {% if '/news' in request.path %}header__link--active{% endif %}">Новости</a>
             </li>
+            <li class="header__menu-item">
+                <a href="/profile" class="header__link {% if '/profile' in request.path %}header__link--active{% endif %}">Личный кабинет</a>
+            </li>
         </ul>
 
         <!-- Правая часть -->
@@ -47,15 +50,9 @@
 
             <!-- Пользователь -->
             {% if user.is_active %}
-                <div class="header__user-dropdown">
-                    <button class="header__avatar" aria-label="Профиль">
-                        {{ user.username.0|upper }}
-                    </button>
-                    <div class="header__dropdown">
-                        <a href="{% url 'profile_main' %}" class="header__dropdown-item">Профиль</a>
-                        <a href="{% url 'logout' %}" class="header__dropdown-item">Выход</a>
-                    </div>
-                </div>
+                <a href="{% url 'profile_main' %}" class="header__avatar" aria-label="Профиль" style="text-decoration: none;">
+                    {{ user.username.0|upper }}
+                </a>
             {% else %}
                 <a href="{% url 'login' %}" class="header__login-btn">Войти</a>
             {% endif %}

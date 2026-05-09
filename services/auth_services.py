@@ -142,10 +142,10 @@ def change_profile(request):
             print(request.POST.get('subscribe-profile'))
             return change_subsription(request)
         else:
-            return 'profile/profile_info.html', {'invalid_old_password': None}, request.user
+            return 'profile/profile_info_new.html', {'invalid_old_password': None}, request.user
     else:
         if len(UserSubscription.objects.filter(user=request.user)) > 0:
             subscription_obj = UserSubscription.objects.filter(user=request.user)[0].is_subscribed
         else:
             subscription_obj = False
-        return 'profile/profile_info.html', {'invalid_login': None, 'subscribe_value': subscription_obj}, request.user
+        return 'profile/profile_info_new.html', {'invalid_login': None, 'subscribe_value': subscription_obj}, request.user
