@@ -8,12 +8,14 @@
 <div class="login-split-container">
     <!-- Левая сторона с котом -->
     <div class="login-cat-side">
-        <img src="{% static 'cat-login.jpg' %}" alt="Милый котик" class="cat-image">
+        <img src="{% static 'photo_2026-05-10_20-26-02.jpg' %}" alt="Милый котик" class="cat-image">
     </div>
 
     <!-- Правая сторона с формой -->
     <div class="login-form-side">
-        <div class="login-logo">NoveLearn</div>
+        <div class="login-logo">
+            <img src="{% static 'logo.PNG' %}" alt="NoveLearn" style="height: 48px; margin-top: 12px;">
+        </div>
 
         <div class="login-form-wrapper">
             <h2 class="login-title">С возвращением!</h2>
@@ -94,7 +96,6 @@
         height: 100%;
         object-fit: cover;
         object-position: center top;
-        display: block;
     }
 
     /* Правая половина — форма */
@@ -126,6 +127,7 @@
     .login-form-wrapper {
         width: 100%;
         max-width: 460px;
+        padding-top: 40px;
     }
 
     .login-title {
@@ -244,6 +246,41 @@
             width: 100%;
             padding: 50px 30px 40px;
         }
+    }
+
+    .input-custom {
+        width: 100%;
+        padding: 16px 18px !important;
+        border: 1.5px solid #d0d0d0;
+        border-radius: 8px;
+        font-size: 17px !important;
+        color: #333;
+        background: #fafafa;
+        transition: border-color 0.2s;
+        box-sizing: border-box;
+    }
+
+    .form-group-custom label {
+        display: block;
+        margin-bottom: 6px;
+        color: #333;
+        font-size: 15px !important;
+        font-weight: 500;
+    }
+
+    .login-submit-btn {
+        width: 100%;
+        padding: 16px !important;
+        background: #1a1a1a;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-size: 17px !important;
+        font-weight: 500;
+        cursor: pointer;
+        margin-top: 8px;
+        margin-bottom: 24px;
+        transition: background 0.2s;
     }
 </style>
 {% endblock content %}
