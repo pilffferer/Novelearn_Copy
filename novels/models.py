@@ -91,6 +91,19 @@ class Novel(models.Model):
         verbose_name_plural = "Новеллы"
 
 
+class UserNovel(models.Model):
+    owner = models.ForeignKey(User, verbose_name="Автор", on_delete=models.CASCADE, related_name="user_novels")
+    title = models.CharField("Название", max_length=150)
+    scenes = models.JSONField("Сцены", default=list, blank=True)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name = "Пользовательская новелла"
+        verbose_name_plural = "Пользовательские новеллы"
+
+
 class NovelShots(models.Model):
     """Скриншоты из новеллы"""
     title = models.CharField("Заголовок", max_length=100)
