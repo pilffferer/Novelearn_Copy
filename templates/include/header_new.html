@@ -13,6 +13,7 @@
             <li class="header__menu-item">
                 <a href="/" class="header__link {% if request.path == '/' %}header__link--active{% endif %}">Главная</a>
             </li>
+            <li class="header__menu-item"><a href="{% url 'studio' %}" class="header__link {% if '/studio/' in request.path %}header__link--active{% endif %}">Студия</a></li>
             <li class="header__menu-item">
                 <a href="/catalog" class="header__link {% if '/catalog' in request.path %}header__link--active{% endif %}">Каталог</a>
             </li>

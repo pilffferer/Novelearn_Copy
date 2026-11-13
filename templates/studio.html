@@ -1,0 +1,53 @@
+{% load static %}
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Студия — NoveLearn</title>
+    <link rel="icon" href="{% static 'images/icon.png' %}">
+    <link rel="stylesheet" href="{% static 'codemirror/lib/codemirror.css' %}">
+    <link rel="stylesheet" href="{% static 'css/studio.css' %}?v=clean3">
+</head>
+<body>
+<div class="studio-shell">
+    <header class="studio-nav">
+        <a href="/" class="brand"><img src="{% static 'logo.PNG' %}" alt="NoveLearn"></a>
+        <span class="breadcrumb">/ &nbsp; Студия</span>
+        <nav aria-label="Навигация студии"><a href="#chapter">Главы</a><a href="#commands" class="desktop-nav-link">Разбор команд</a><a href="{% url 'login' %}" class="desktop-nav-link">Войти</a></nav>
+    </header>
+    <main>
+        <section class="chapter-bar" id="chapter">
+            <div><p class="eyebrow">МОЯ ПЕРВАЯ НОВЕЛЛА</p><h1>Глава 1. Сцена</h1><p class="muted">Соберите фон, персонажа и реплику в этом же проекте</p></div>
+            <div class="save-info"><strong id="save-status" role="status">Черновик на этом устройстве</strong><p class="muted">Проект в этом браузере. Очистка данных его сотрёт.</p><button class="secondary" id="account-info">Сохранить в аккаунт</button><p id="account-message" class="muted" hidden>Сохранение в аккаунт ещё не подключено. Черновик остаётся в браузере.</p></div>
+        </section>
+        <div class="mobile-tabs" role="tablist" aria-label="Панели студии">
+            <button role="tab" id="tab-code" aria-selected="true" aria-controls="code-panel" data-tab="code">Код</button><button role="tab" id="tab-preview" aria-selected="false" aria-controls="preview-panel" data-tab="preview" tabindex="-1">Превью</button><button role="tab" id="tab-errors" aria-selected="false" aria-controls="feedback-panel" data-tab="errors" tabindex="-1">Ошибки</button>
+        </div>
+        <div class="workspace" data-active="code">
+            <aside class="lesson"><details id="lesson-details" open><summary><span>Что сделать</span><span class="lesson-toggle" aria-hidden="true">Свернуть ↑</span></summary><p>Добавьте фон комнаты, покажите кота и напишите его первую реплику.</p><div class="example"><small>ПРИМЕР</small><code>scene cozy_room</code></div><p class="muted">Всё останется в этом же проекте — от первой сцены до финала.</p></details></aside>
+            <section class="code-panel" id="code-panel" aria-label="Редактор кода">
+                <div class="code-window"><div class="code-toolbar"><span>scene.rpy</span><small>Глава 1</small></div><div class="editor-wrap"><textarea id="source" spellcheck="false" aria-label="Код сцены"></textarea><div id="example-overlay" aria-hidden="true"><pre>1    label start:
+2        scene cozy_room
+3        show cat
+4        cat "Начнём нашу историю?"
+5
+6        return</pre><small>ПРИМЕР — ЕЩЁ НЕ ВВЕДЁН</small></div></div><div class="code-footer" id="code-footer">Пустой проект · Начните с примера</div></div>
+                <div class="editor-actions"><button id="check" class="primary">Проверить</button><button id="run" class="secondary" disabled>Запустить превью</button></div>
+                <p class="muted autosave" id="autosave">Автосохранение включено</p>
+                <div id="feedback-panel" class="feedback" aria-live="polite"><h2 id="feedback-title">Начните с первой команды</h2><p id="feedback-text">Введите пример в редактор. Кнопка «Проверить» подскажет, всё ли готово к запуску.</p><pre id="error-context" hidden></pre><button id="error-line" class="text-button" hidden>Перейти к строке</button><a href="#commands" id="error-help" hidden>Открыть в разборе →</a></div>
+            </section>
+            <section class="preview-panel" id="preview-panel" aria-label="Превью сцены">
+                <h2>Превью</h2><p class="muted" id="preview-status">Ожидает запуска</p>
+                <div class="stage" id="stage" data-room="{% static 'photo_2026-05-10_20-26-02.jpg' %}" data-street="{% static 'bg.jpg' %}">
+                    <div class="preview-empty" id="preview-empty"><h2>Здесь появится ваша сцена</h2><p>Добавьте фон, персонажа и реплику.<br>Затем проверьте и запустите превью.</p></div>
+                    <div class="dialog" id="dialog" hidden><strong id="speaker"></strong><p id="line"></p><button id="next" class="text-button" hidden>Дальше →</button></div>
+                </div>
+            </section>
+        </div>
+        <details class="command-help" id="commands"><summary>Разбор команд</summary><dl><dt>label start:</dt><dd>Начало сцены, без отступа.</dd><dt>scene cozy_room / scene street</dt><dd>Выбрать фон комнаты или улицы.</dd><dt>show cat</dt><dd>Кот в сцене cozy_room.</dd><dt>cat "Привет!"</dt><dd>Реплика кота. Для текста рассказчика — narrator "Текст" или просто "Текст".</dd><dt>return</dt><dd>Завершить сцену.</dd></dl><p>Команды внутри сцены пишутся с отступом в четыре пробела.</p></details>
+    </main>
+</div>
+<script src="{% static 'codemirror/lib/codemirror.js' %}"></script>
+<script src="{% static 'js/studio.js' %}?v=clean3" defer></script>
+</body></html>

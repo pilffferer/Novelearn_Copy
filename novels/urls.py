@@ -3,9 +3,12 @@ from django.urls import path, re_path
 from django.views.generic import TemplateView
 
 from . import views
+from . import studio
 from .forms import UserPasswordResetForm, UserSetPasswordForm
 
 urlpatterns = [
+    path('studio/', studio.studio, name='studio'),
+    path('studio/check/', studio.check_scene, name='studio_check'),
     path('catalog/', views.NovelView.as_view()),
     path('articles/', views.ArticleView.as_view()),
     path('articles/<slug:slug>/', views.ArticleDetailView.as_view(), name="article_detail"),
