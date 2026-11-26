@@ -1,0 +1,46 @@
+{% load static %}
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Разбор команд | NoveLearn</title>
+    <link rel="icon" href="{% static 'images/icon.png' %}">
+    <link rel="stylesheet" href="{% static 'css/studio.css' %}?v=figma-v2">
+</head>
+<body class="studio-page">
+<div class="studio-shell">
+    {% include 'include/studio_nav.html' with active_page='commands' %}
+    <main class="commands-page">
+        <div class="commands-search">
+            <h1>Разбор</h1>
+            <p>Здесь вы найдёте команды, примеры и объяснения ошибок.</p>
+            <form action="{% url 'studio_commands' %}" method="get" role="search">
+                <label class="visually-hidden" for="command-search">Команда или ошибка</label>
+                <input id="command-search" name="q" type="search" value="{{ query }}" maxlength="120" placeholder="Введите ошибку или название команды">
+                <button class="secondary" type="submit">Найти</button>
+            </form>
+            {% if query %}<a class="text-button" href="{% url 'studio_commands' %}">Все команды</a>{% endif %}
+        </div>
+        <div class="commands-index">
+            {% for group in groups %}
+            <section class="command-group" aria-labelledby="command-chapter-{{ group.number }}">
+                <h2 id="command-chapter-{{ group.number }}">Глава {{ group.number }} {{ group.title }}</h2>
+                <details class="command-entry"{% if query %} open{% endif %}>
+                    <summary><span>{% if query %}Результаты поиска{% else %}Команды главы{% endif %}</span><span class="secondary" aria-hidden="true">Узнать</span></summary>
+                    <dl>
+                        {% for command, description in group.commands %}
+                        <dt><code>{{ command }}</code></dt>
+                        <dd>{{ description }}</dd>
+                        {% endfor %}
+                    </dl>
+                </details>
+            </section>
+            {% empty %}
+            <p role="status">Ничего не найдено. Попробуйте другую команду.</p>
+            {% endfor %}
+        </div>
+    </main>
+</div>
+</body>
+</html>

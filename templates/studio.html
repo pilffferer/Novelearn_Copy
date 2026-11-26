@@ -4,50 +4,205 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Студия — NoveLearn</title>
+    <title>{% if landing %}NoveLearn | Создай свою новеллу{% else %}Студия | NoveLearn{% endif %}</title>
     <link rel="icon" href="{% static 'images/icon.png' %}">
     <link rel="stylesheet" href="{% static 'codemirror/lib/codemirror.css' %}">
-    <link rel="stylesheet" href="{% static 'css/studio.css' %}?v=clean3">
+    <link rel="stylesheet" href="{% static 'css/studio.css' %}?v=figma-v2">
 </head>
-<body>
+<body class="{% if landing %}studio-home{% else %}studio-page{% endif %}" data-open-chapters="{{ open_chapters }}"{% if account_id %} data-account-id="{{ account_id }}"{% endif %}>
+{% if account_drafts %}{{ account_drafts|json_script:"account-drafts" }}{% endif %}
 <div class="studio-shell">
+    {% if landing %}
     <header class="studio-nav">
-        <a href="/" class="brand"><img src="{% static 'logo.PNG' %}" alt="NoveLearn"></a>
-        <span class="breadcrumb">/ &nbsp; Студия</span>
-        <nav aria-label="Навигация студии"><a href="#chapter">Главы</a><a href="#commands" class="desktop-nav-link">Разбор команд</a><a href="{% url 'login' %}" class="desktop-nav-link">Войти</a></nav>
+        <a href="{% url 'index' %}" class="brand">
+            {% if not landing %}<span class="studio-tag">Студия</span>{% endif %}
+            <img src="{% static 'logo.PNG' %}" alt="NoveLearn">
+        </a>
+        <nav aria-label="Основная навигация">
+            <a href="{% url 'index' %}"{% if landing %} aria-current="page"{% endif %}>Главная</a>
+            <a href="{% url 'studio' %}"{% if not landing %} aria-current="page"{% endif %}>Студия</a>
+            <a href="{% url 'catalog' %}">Каталог</a>
+            <a href="{% url 'course_main' %}">Обучение</a>
+            <a href="{% url 'articles' %}">Статьи</a>
+            <a href="{% url 'news' %}">Новости</a>
+            {% if request.user.is_authenticated %}
+                <a class="secondary nav-account" href="{% url 'profile_main' %}">Личный кабинет</a>
+            {% else %}
+                <a class="secondary nav-account" href="{% url 'login' %}">Войти</a>
+            {% endif %}
+        </nav>
     </header>
+    {% else %}
+    {% include 'include/studio_nav.html' with active_page='chapters' %}
+    {% endif %}
     <main>
-        <section class="chapter-bar" id="chapter">
-            <div><p class="eyebrow">МОЯ ПЕРВАЯ НОВЕЛЛА</p><h1>Глава 1. Сцена</h1><p class="muted">Соберите фон, персонажа и реплику в этом же проекте</p></div>
-            <div class="save-info"><strong id="save-status" role="status">Черновик на этом устройстве</strong><p class="muted">Проект в этом браузере. Очистка данных его сотрёт.</p><button class="secondary" id="account-info">Сохранить в аккаунт</button><p id="account-message" class="muted" hidden>Сохранение в аккаунт ещё не подключено. Черновик остаётся в браузере.</p></div>
+        {% if landing %}
+        <section class="home-intro" id="how-it-works">
+            <p class="eyebrow">Своя история начинается здесь</p>
+            <h1>Напиши первую сцену.<br>Без установки.</h1>
+            <p>Фон, персонаж и реплика. Превью сразу в браузере.<br>Отдельный движок ставить не нужно.</p>
+            <a id="back-to-studio" href="{% url 'studio' %}" hidden>Главы</a>
         </section>
+        {% else %}
+        <section class="chapter-bar" id="chapter">
+            <div>
+                <a id="back-to-studio" href="{% url 'studio' %}" hidden>К главам</a>
+                <p id="project-name" class="eyebrow" hidden>Моя первая новелла</p>
+                <h1 id="page-title">Моя первая новелла</h1>
+                <p class="muted" id="chapter-subtitle"></p>
+            </div>
+            <div class="save-info">
+                {% include 'include/studio_save_button.html' %}
+                <p id="save-status" role="status">Черновик на этом устройстве</p>
+                <p class="muted" id="progress" role="status"></p>
+            </div>
+        </section>
+        {% endif %}
+        <div id="chapter-work"{% if not landing %} hidden{% endif %} data-check-url="{% url 'studio_check' %}" data-save-url="{% url 'studio_save' %}" data-sound-url="{% static 'studio-knock.wav' %}">
         <div class="mobile-tabs" role="tablist" aria-label="Панели студии">
             <button role="tab" id="tab-code" aria-selected="true" aria-controls="code-panel" data-tab="code">Код</button><button role="tab" id="tab-preview" aria-selected="false" aria-controls="preview-panel" data-tab="preview" tabindex="-1">Превью</button><button role="tab" id="tab-errors" aria-selected="false" aria-controls="feedback-panel" data-tab="errors" tabindex="-1">Ошибки</button>
         </div>
         <div class="workspace" data-active="code">
-            <aside class="lesson"><details id="lesson-details" open><summary><span>Что сделать</span><span class="lesson-toggle" aria-hidden="true">Свернуть ↑</span></summary><p>Добавьте фон комнаты, покажите кота и напишите его первую реплику.</p><div class="example"><small>ПРИМЕР</small><code>scene cozy_room</code></div><p class="muted">Всё останется в этом же проекте — от первой сцены до финала.</p></details></aside>
+            <aside class="lesson">
+                {% if not landing %}
+                {% for group in course %}{% for lesson in group.lessons %}
+                <section data-lesson-guide="{{ lesson.id }}" hidden aria-label="Что сделать">
+                    <h2>Что сделать</h2>
+                    {% if lesson.id == '1.1' %}
+                    <ul class="lesson-instructions">
+                        <li>Задай имя персонажу</li>
+                        <li>Напиши одну реплику</li>
+                        <li>Закончи сцену командой return</li>
+                    </ul>
+                    <code class="lesson-snippet">define cat = Character("Кот")</code>
+                    {% else %}
+                    <p data-practice="{{ lesson.id }}">{{ lesson.practice }}</p>
+                    {% endif %}
+                    <details class="lesson-example">
+                        <summary>Разбор примера</summary>
+                        <p>{{ lesson.theory }}</p>
+                        <pre><code>{{ lesson.code }}</code></pre>
+                        <p>{{ lesson.hint }}</p>
+                    </details>
+                </section>
+                {% endfor %}{% endfor %}
+                {% endif %}
+            </aside>
             <section class="code-panel" id="code-panel" aria-label="Редактор кода">
-                <div class="code-window"><div class="code-toolbar"><span>scene.rpy</span><small>Глава 1</small></div><div class="editor-wrap"><textarea id="source" spellcheck="false" aria-label="Код сцены"></textarea><div id="example-overlay" aria-hidden="true"><pre>1    label start:
-2        scene cozy_room
-3        show cat
-4        cat "Начнём нашу историю?"
-5
-6        return</pre><small>ПРИМЕР — ЕЩЁ НЕ ВВЕДЁН</small></div></div><div class="code-footer" id="code-footer">Пустой проект · Начните с примера</div></div>
-                <div class="editor-actions"><button id="check" class="primary">Проверить</button><button id="run" class="secondary" disabled>Запустить превью</button></div>
-                <p class="muted autosave" id="autosave">Автосохранение включено</p>
-                <div id="feedback-panel" class="feedback" aria-live="polite"><h2 id="feedback-title">Начните с первой команды</h2><p id="feedback-text">Введите пример в редактор. Кнопка «Проверить» подскажет, всё ли готово к запуску.</p><pre id="error-context" hidden></pre><button id="error-line" class="text-button" hidden>Перейти к строке</button><a href="#commands" id="error-help" hidden>Открыть в разборе →</a></div>
-            </section>
-            <section class="preview-panel" id="preview-panel" aria-label="Превью сцены">
-                <h2>Превью</h2><p class="muted" id="preview-status">Ожидает запуска</p>
-                <div class="stage" id="stage" data-room="{% static 'photo_2026-05-10_20-26-02.jpg' %}" data-street="{% static 'bg.jpg' %}">
-                    <div class="preview-empty" id="preview-empty"><h2>Здесь появится ваша сцена</h2><p>Добавьте фон, персонажа и реплику.<br>Затем проверьте и запустите превью.</p></div>
-                    <div class="dialog" id="dialog" hidden><strong id="speaker"></strong><p id="line"></p><button id="next" class="text-button" hidden>Дальше →</button></div>
+                <div class="code-window">
+                    <div class="code-toolbar">
+                        <span>{% if landing %}Первая сцена{% else %}scene.rpy{% endif %}</span>
+                        <div class="code-toolbar-tools">
+                            <small id="chapter-number">{% if landing %}script.rpy{% endif %}</small>
+                            <button id="reset-code" class="editor-reset" type="button"
+                                    aria-label="Сбросить код" title="Сбросить код" disabled>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                     stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                                     stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                    <path d="M3 12a9 9 0 1 1 2.6 6.4M3 5v7h7"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="editor-wrap"><textarea id="source" spellcheck="false" aria-label="Код новеллы"></textarea></div>
+                    {% if landing %}<div class="code-caption">Код новеллы · Черновик</div>{% endif %}
                 </div>
+                <div class="editor-actions">
+                    <button id="check" class="primary">{% if landing %}Начать сцену{% else %}Проверить{% endif %}</button>
+                    <button id="run" class="secondary" disabled>Запустить превью</button>
+                    {% if landing %}<span class="home-action-note muted">Можно начать без регистрации</span>{% endif %}
+                </div>
+                <p class="muted autosave" id="autosave"></p>
+                <div id="feedback-panel" class="feedback" aria-live="polite" hidden><h2 id="feedback-title"></h2><p id="feedback-text"></p><div class="feedback-links"><button id="error-line" class="text-button" hidden>К строке</button>{% if not landing %}<a class="text-button" id="error-help" href="{% url 'studio_commands' %}" hidden>Открыть в разборе</a>{% endif %}</div></div>
             </section>
+            <div class="preview-column">
+            <section class="preview-panel" id="preview-panel" aria-label="Превью сцены">
+                <h2 class="visually-hidden">Превью</h2>
+                <div class="stage" id="stage" data-room="{% static 'photo_2026-05-10_20-26-02.jpg' %}" data-street="{% static 'bg.jpg' %}">
+                    <div class="scene-art" id="scene-art" aria-hidden="true"></div>
+                    {% if not landing %}
+                    <div class="empty-dialog" id="preview-placeholder" aria-hidden="true">
+                        <strong>Кот</strong><div></div>
+                    </div>
+                    {% endif %}
+                    <div class="dialog" id="dialog" hidden><strong id="speaker"></strong><p id="line"></p><div id="choices"></div><button id="next" class="text-button">Дальше →</button></div>
+                </div>
+                <p class="muted" id="preview-status">{% if landing %}Пример в браузере{% else %}Превью не запущено{% endif %}</p>
+            </section>
+            {% if not landing %}
+                <section class="chapter-status" aria-labelledby="chapter-status-title" hidden>
+                    <h3 id="chapter-status-title">Прогресс задания</h3>
+                    <ul id="chapter-checklist">
+                        {% for group in course %}{% for lesson in group.lessons %}
+                        {% for key, label in lesson.criteria %}
+                        <li data-lesson-criteria="{{ lesson.id }}" data-criterion="{{ key }}" hidden><span aria-hidden="true">○</span><p>{{ label }}</p></li>
+                        {% endfor %}{% endfor %}{% endfor %}
+                        <li data-criterion="task" hidden><span aria-hidden="true">○</span><p>Условия задания выполнены</p></li>
+                        <li data-criterion="preview"><span aria-hidden="true">○</span><p id="preview-criterion">Сцена просмотрена</p></li>
+                    </ul>
+                    <p id="completion-hint" class="muted" role="status"></p>
+                    <div class="chapter-actions">
+                        <button id="next-chapter" class="primary" type="button" hidden>Следующая глава →</button>
+                        <button id="complete" class="secondary" aria-describedby="completion-hint" type="button" disabled>К главам</button>
+                    </div>
+                </section>
+                <section class="save-card" aria-label="Сохранение новеллы">
+                    <p>Черновик хранится на этом устройстве.</p>
+                    {% include 'include/studio_save_button.html' %}
+                    <p class="save-result" id="account-save-result" role="status"></p>
+                </section>
+            {% endif %}
+            </div>
         </div>
-        <details class="command-help" id="commands"><summary>Разбор команд</summary><dl><dt>label start:</dt><dd>Начало сцены, без отступа.</dd><dt>scene cozy_room / scene street</dt><dd>Выбрать фон комнаты или улицы.</dd><dt>show cat</dt><dd>Кот в сцене cozy_room.</dd><dt>cat "Привет!"</dt><dd>Реплика кота. Для текста рассказчика — narrator "Текст" или просто "Текст".</dd><dt>return</dt><dd>Завершить сцену.</dd></dl><p>Команды внутри сцены пишутся с отступом в четыре пробела.</p></details>
+        </div>
+        {% if landing %}
+        <section class="resume-project" aria-label="Проект новеллы">
+            <div><p class="eyebrow">Моя новелла</p><h2 id="resume-title">Продолжите в главе → Сцена</h2></div>
+            <a id="resume-project" class="primary" href="{% url 'studio' %}?chapter=1">Начать новеллу</a>
+        </section>
+        {% endif %}
+        <section id="project-overview" aria-labelledby="chapters-title">
+            {% if landing %}<p class="eyebrow">От первой реплики до финала</p>{% endif %}
+            <h2 id="chapters-title">{% if landing %}Одна новелла. Четыре главы.{% else %}Четыре главы{% endif %}</h2>
+            {% if landing %}
+                <ol id="chapter-list" class="chapter-list"></ol>
+            {% else %}
+                <p class="muted course-intro">Каждая глава меняет одну и ту же новеллу. Задание засчитывается, когда действие получилось в превью.</p>
+                {% for group in course %}
+                <section class="course-group" aria-labelledby="course-title-{{ group.number }}">
+                    <div class="course-group-title">
+                        <h3 id="course-title-{{ group.number }}">Глава {{ group.number }} {{ group.title }}</h3>
+                    </div>
+                    {% for lesson in group.lessons %}
+                    <div class="course-task-row" data-step="{{ lesson.id }}">
+                        <span>{{ lesson.id }} - {{ lesson.title }}</span>
+                        <span class="course-task-state">Не начато</span>
+                        <a class="secondary course-task-link" data-step-link="{{ lesson.id }}">{{ lesson.action }}</a>
+                    </div>
+                    {% endfor %}
+                </section>
+                {% endfor %}
+                <a id="download-legacy" class="text-button" download="script.rpy" hidden>Скачать прежний черновик</a>
+            {% endif %}
+        </section>
     </main>
+    {% if landing %}
+    <footer class="studio-home-footer">
+        <a href="{% url 'index' %}" class="brand"><img src="{% static 'logo.PNG' %}" alt="NoveLearn"></a>
+        <a href="{% url 'studio_commands' %}">Разбор команд</a>
+    </footer>
+    {% endif %}
 </div>
+<dialog id="reset-dialog" class="reset-dialog" aria-labelledby="reset-title">
+    <form method="dialog">
+        <h2 id="reset-title">Сбросить код?</h2>
+        <p id="reset-message">{% if landing %}Вернётся исходный пример.{% else %}Вернётся код с начала задания. Текущие правки будут заменены.{% endif %}</p>
+        <div class="chapter-actions">
+            <button class="secondary" value="cancel" autofocus>Отмена</button>
+            <button class="primary" value="reset">Сбросить</button>
+        </div>
+    </form>
+</dialog>
 <script src="{% static 'codemirror/lib/codemirror.js' %}"></script>
-<script src="{% static 'js/studio.js' %}?v=clean3" defer></script>
+<script src="{% static 'js/studio.js' %}?v=figma-v2" defer></script>
 </body></html>

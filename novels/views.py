@@ -4,6 +4,8 @@ from django.conf.global_settings import DEFAULT_FROM_EMAIL
 from django.contrib.auth import authenticate, login
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
+from django.utils.http import url_has_allowed_host_and_scheme
+from .studio import saved_studio_project
 from django.views.generic import ListView, DetailView
 from django.views.generic.base import View, TemplateView
 from pip._vendor import requests
@@ -115,9 +117,12 @@ class ArticleRatingList(generics.ListAPIView):
 
 def user_login(request):
     relocate, template, params = services.auth_services.user_login(request)
+    next_url = request.POST.get('next') or request.GET.get('next', '')
+    if not url_has_allowed_host_and_scheme(next_url, {request.get_host()}, require_https=request.is_secure()):
+        next_url = ''
     if relocate:
-        return redirect(template)
-    return render(request, template, params)
+        return redirect(next_url or template)
+    return render(request, template, {**params, 'next': next_url})
 
 
 def user_logout(request):
@@ -279,9 +284,14 @@ def course_main_view(request):
 def profile_main_view(request):
     if not request.user.is_authenticated:
         return redirect('login')
-    template, params, user = services.auth_services.change_profile(request)
+    _, params, user = services.auth_services.change_profile(request)
     request.user = user
-    return render(request, template, params)
+    params['has_saved_novel'] = saved_studio_project(user) is not None
+    if 'subscribe_value' not in params:
+        params['subscribe_value'] = models.UserSubscription.objects.filter(user=user).values_list(
+            'is_subscribed', flat=True
+        ).first()
+    return render(request, 'profile/profile_info_new.html', params)
 
 
 def profile_progress_view(request):

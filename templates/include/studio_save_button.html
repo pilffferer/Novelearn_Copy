@@ -1,0 +1,5 @@
+{% if request.user.is_authenticated %}
+<button class="secondary account-save" type="button" data-account-save>Сохранить в аккаунт</button>
+{% else %}
+<a class="secondary account-save" href="{% url 'login' %}?next={{ request.get_full_path|urlencode }}">Сохранить в аккаунт</a>
+{% endif %}

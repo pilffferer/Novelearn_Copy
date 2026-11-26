@@ -1,0 +1,17 @@
+{% load static %}
+<header class="studio-nav">
+    <a href="{% url 'index' %}" class="brand">
+        {% if not hide_studio_tag %}<span class="studio-tag">Студия</span>{% endif %}
+        <img src="{% static 'logo.PNG' %}" alt="NoveLearn">
+    </a>
+    <nav aria-label="Основная навигация">
+        <a href="{% url 'index' %}#how-it-works">Как это работает</a>
+        <a href="{% url 'studio' %}{% if account_id %}?project=account{% endif %}"{% if active_page == 'chapters' %} aria-current="page"{% endif %}>Главы</a>
+        <a href="{% url 'studio_commands' %}"{% if active_page == 'commands' %} aria-current="page"{% endif %}>Разбор команд</a>
+        {% if request.user.is_authenticated %}
+        <a class="secondary nav-account" href="{% url 'profile_main' %}"{% if active_page == 'profile' %} aria-current="page"{% endif %}>Кабинет</a>
+        {% else %}
+        <a class="secondary nav-account" href="{% url 'login' %}?next={{ request.get_full_path|urlencode }}">Войти</a>
+        {% endif %}
+    </nav>
+</header>

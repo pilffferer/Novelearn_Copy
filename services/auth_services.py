@@ -81,6 +81,8 @@ def change_password(request):
     new_password = request.POST['new-password']
     new_password2 = request.POST['new-password-2']
     if str.strip(old_password) != '' and str.strip(new_password) != '' and str.strip(new_password2) != '':
+        if new_password != new_password2:
+            return 'profile/profile_info.html', {'invalid_old_password': 'Новые пароли не совпадают'}, request.user
         if len(User.objects.filter(username=request.user.username)) > 0:
             user = authenticate(request, username=request.user.username, password=old_password)
             if user is None:
